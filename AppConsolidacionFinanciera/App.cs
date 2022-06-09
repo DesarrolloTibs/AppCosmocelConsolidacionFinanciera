@@ -25,6 +25,7 @@ namespace AppConsolidacionFinanciera
             int Id = _config.GetSection("IdUser").Get<int>();
             string User = _config.GetSection("UserName").Get<string>();
             string Password = _config.GetSection("UserPassword").Get<string>();
+            string UrlApi = _config.GetSection("UrlApi").Get<string>();
             /*  foreach (string emailAddress in emailAddresses)
               {
                   _logger.LogInformation("Email address: {@EmailAddress}", emailAddress);
@@ -32,7 +33,7 @@ namespace AppConsolidacionFinanciera
             _logger.LogInformation("Iniciando Proceso Conexion...");
             ConsumeEventSync objsync = new ConsumeEventSync();
 
-          var result=  objsync.PostEvent_data(Id,User,Password); //Adding Event
+          var result=  objsync.PostEvent_data(Id,User,Password, UrlApi); //Adding Event
             Respuesta respuesta = JsonConvert.DeserializeObject<Respuesta>(result);
             _logger.LogInformation("Conexion Establecida");
             _logger.LogInformation(respuesta.Message);
@@ -42,9 +43,12 @@ namespace AppConsolidacionFinanciera
             if (!String.IsNullOrEmpty(token))
             {
                 _logger.LogInformation("Obteniendo Informacion...");
-               var x= objsync.Postdata(usuario, token);
+               var x= objsync.Postdata(usuario, token, UrlApi);
                 RespuestaTipoCambio respuestat= JsonConvert.DeserializeObject<RespuestaTipoCambio>(x);
                 _logger.LogInformation(respuesta.StatusCode);
+                var y = objsync.PostdataDivisas(usuario, token, UrlApi);
+                RespuestaTipoCambio respuestatay = JsonConvert.DeserializeObject<RespuestaTipoCambio>(y);
+                _logger.LogInformation(respuestatay.StatusCode);
             }
             else {
                 _logger.LogInformation("Intente de Nuevamente...");
